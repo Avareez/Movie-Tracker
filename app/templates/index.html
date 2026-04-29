@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Movie Tracker</title>
+</head>
+
+<body>
+    <h1>Movie Tracker</h1>
+
+    <form method="POST">
+        <input type="text" name="query" placeholder="Search for a movie..." value="{{ query }}">
+        <button type="submit">Search</button>
+    </form>
+
+    <div>
+        {% for movie in movies %}
+        <div>
+            {% if movie.poster_url %}
+            <img src="{{ movie.poster_url }}" alt="{{ movie.title }} poster" width="100">
+            {% else %}
+            <div
+                style="width: 100px; height: 150px; background-color: #ccc; display: flex; align-items: center; justify-content: center;">
+                No Image
+            </div>
+            {% endif %}
+            <div>
+                <h5>{{ movie.title }}</h5>
+                <p>
+                    {% if movie.release_date %}
+                    {{ movie.release_date[:4] }}
+                    {% else %}
+                    N/A
+                    {% endif %}
+                </p>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+</body>
+
+</html>
