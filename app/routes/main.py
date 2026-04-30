@@ -1,5 +1,5 @@
 from flask import Blueprint, render_template, request
-from app.services.tmdb import search_movies
+from app.services.tmdb import search_movies, get_movie_details
 
 main_bp = Blueprint('main', __name__)
 
@@ -13,3 +13,8 @@ def index():
         if query:
             movies = search_movies(query)
     return render_template("index.html", movies=movies, query=query)
+
+@main_bp.route("/movie/<int:tmdb_id>")
+def movie_details(tmdb_id):
+    movie = get_movie_details(tmdb_id)
+    return render_template("movie_details.html", movie=movie)
