@@ -8,7 +8,10 @@
 </head>
 
 <body>
-    <a href="{{url_for('auth.register')}}" style="margin-left: 95%;">Register</a>
+    <div style="display: flex; justify-content: flex-end; margin-bottom: 20px;">
+        <a href="{{url_for('auth.register')}}" style="margin: 5px;">Register</a>
+        <a href="{{url_for('auth.login')}}" style="margin: 5px;">Login</a>
+    </div>
     <h1>Movie Tracker</h1>
     <form method=" POST">
         <input type="text" name="query" placeholder="Search for a movie..." value="{{ query }}">

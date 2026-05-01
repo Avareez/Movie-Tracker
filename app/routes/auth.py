@@ -21,5 +21,18 @@ def register():
         db.session.commit()
 
         return redirect(url_for("main.index"))
-    
     return render_template("register.html")
+
+@auth_bp.route("/login", methods=["GET", "POST"])
+def login():
+    if request.method == "POST":
+        username = request.form.get("username", "").strip()
+        password = request.form.get("password", "").strip()
+
+        user = User.query.filter_by(username=username).first()
+        if not user or not user.check_password(password):
+            error = "Invalid username or password."
+            return render_template("login.html", error=error)
+        
+        return redirect(url_for("main.index"))
+    return render_template("login.html")
