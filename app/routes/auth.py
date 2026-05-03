@@ -1,6 +1,7 @@
 from flask import Blueprint, render_template, request, redirect, url_for
 from app import db
 from app.db_models import User
+from flask_login import login_user
 
 auth_bp = Blueprint('auth', __name__)
 
@@ -34,5 +35,6 @@ def login():
             error = "Invalid username or password."
             return render_template("login.html", error=error)
         
+        login_user(user)
         return redirect(url_for("main.index"))
     return render_template("login.html")

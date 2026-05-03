@@ -1,8 +1,10 @@
 from app import db
 from datetime import datetime
 from werkzeug.security import generate_password_hash, check_password_hash
+from flask_login import UserMixin
+from app import login_manager
 
-class User(db.Model):
+class User(db.Model, UserMixin):
     __tablename__ = "users"
     id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String(80), unique=True, nullable=False)
@@ -29,3 +31,7 @@ class MovieItem(db.Model):
 
     def __repr__(self):
         return f"<MovieItem tmdb={self.tmdb_id}>"
+    
+@login_manager.user_loader
+def load_user(user_id):
+    return User.query.get(int(user_id))
