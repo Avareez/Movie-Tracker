@@ -1,7 +1,7 @@
 from flask import Blueprint, render_template, request, redirect, url_for
 from app import db
 from app.db_models import User
-from flask_login import login_user
+from flask_login import login_user, logout_user
 
 auth_bp = Blueprint('auth', __name__)
 
@@ -38,3 +38,8 @@ def login():
         login_user(user)
         return redirect(url_for("main.index"))
     return render_template("login.html")
+
+@auth_bp.route("/logout")
+def logout():
+    logout_user()
+    return redirect(url_for("main.index"))
