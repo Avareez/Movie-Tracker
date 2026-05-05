@@ -1,12 +1,11 @@
-from flask import Blueprint, jsonify, request
-from app import db
-from app.db_models import MovieItem
+from flask import Blueprint, jsonify
+from app.services.movies import get_user_movies
 
 api_bp = Blueprint('api', __name__, url_prefix='/api')
 
 @api_bp.route("/users/<int:user_id>/movies", methods=["GET"])
 def get_movies(user_id):
-    movies = MovieItem.query.filter_by(user_id=user_id).all()
+    movies = get_user_movies(user_id)
     return jsonify([{
         "id": m.id,
         "tmdb_id": m.tmdb_id,

@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Movies</title>
+</head>
+
+<body>
+    <h1>My Movies</h1>
+    <a href="{{ url_for('main.index') }}">Back</a>
+
+    {% if movies %}
+    <ul>
+        {% for movie in movies %}
+        <li>
+            TMDB ID: {{ movie.tmdb_id }} |
+            Status: {{ movie.status }} |
+            Rating: {{ movie.user_rating or "N/A" }}
+        </li>
+        {% endfor %}
+    </ul>
+    {% else %}
+    <p>No movies on your list yet.</p>
+    {% endif %}
+</body>
+
+</html>

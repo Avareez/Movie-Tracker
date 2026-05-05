@@ -1,5 +1,7 @@
 from flask import Blueprint, render_template, request
+from flask_login import login_required, current_user
 from app.services.tmdb import search_movies, get_movie_details
+from app.services.movies import get_user_movies
 
 main_bp = Blueprint('main', __name__)
 
@@ -18,3 +20,9 @@ def index():
 def movie_details(tmdb_id):
     movie = get_movie_details(tmdb_id)
     return render_template("movie_details.html", movie=movie)
+
+@main_bp.route("/my-movies")
+@login_required
+def my_movies():
+    movies = get_user_movies(current_user.id)
+    return render_template("my_movies.html", movies=movies)
