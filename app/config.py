@@ -8,3 +8,4 @@ class Config:
     SQLALCHEMY_DATABASE_URI = os.getenv("DATABASE_URL", "sqlite:///movie_tracker.db")
     SQLALCHEMY_TRACK_MODIFICATIONS = False
     TMDB_API_KEY = os.getenv("TMDB_API_KEY")
+    JWT_SECRET_KEY = os.getenv("JWT_SECRET_KEY")
