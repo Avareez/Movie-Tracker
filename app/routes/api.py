@@ -1,10 +1,47 @@
-from flask import Blueprint, jsonify
+from flask import Blueprint, jsonify, request
+from flask_jwt_extended import create_access_token
+from app.services.auth import register_user, authenticate_user
 from app.services.movies import get_user_movies
 
 api_bp = Blueprint('api', __name__, url_prefix='/api')
 
+@api_bp.route("/register", methods=["POST"])
+def api_register():
+    data = request.get_json()
+    if not data:
+        return jsonify({"error": "Missing JSON data"}), 400
+    
+    username = data.get("username", "").strip()
+    password = data.get("password", "").strip()
+    if not username or not password:
+        return jsonify({"error": "Username and password are required"}), 400
+    
+    user, error = register_user(username, password)
+    if error:
+        return jsonify({"error": error}), 409
+    return jsonify({"message": "User created successfully"}), 201
+
+@api_bp.route("/login", methods=["POST"])
+def api_login():
+    data = request.get_json()
+    if not data:
+        return jsonify({"error": "Missing JSON data"}), 400
+    
+    username = data.get("username", "").strip()
+    password = data.get("password", "").strip()
+    if not username or not password:
+        return jsonify({"error": "Username and password are required"}), 400
+    
+    user, error = authenticate_user(username, password)
+    if error:
+        return jsonify({"error": error}), 401
+    
+    token = create_access_token(identity=str(user.id))
+    return jsonify({"token": token}), 200
+
+
 @api_bp.route("/users/<int:user_id>/movies", methods=["GET"])
-def get_movies(user_id):
+def api_get_movies(user_id):
     movies = get_user_movies(user_id)
     return jsonify([{
         "id": m.id,
