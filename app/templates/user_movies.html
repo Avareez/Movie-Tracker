@@ -4,11 +4,11 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>My Movies</title>
+    <title>Movie List</title>
 </head>
 
 <body>
-    <h1>My Movies</h1>
+    <h1>{% if is_owner %}My Movies{% else %}User's Movies{% endif %}</h1>
     <a href="{{ url_for('main.index') }}">Back</a>
 
     {% if movies %}
@@ -18,6 +18,10 @@
             TMDB ID: {{ movie.tmdb_id }} |
             Status: {{ movie.status }} |
             Rating: {{ movie.user_rating or "N/A" }}
+            {% if is_owner %}
+            <a href="#">Change status</a> |
+            <a href="#">Delete</a>
+            {% endif %}
         </li>
         {% endfor %}
     </ul>

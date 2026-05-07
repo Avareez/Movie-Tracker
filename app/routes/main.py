@@ -21,8 +21,8 @@ def movie_details(tmdb_id):
     movie = get_movie_details(tmdb_id)
     return render_template("movie_details.html", movie=movie)
 
-@main_bp.route("/my-movies")
-@login_required
-def my_movies():
-    movies = get_user_movies(current_user.id)
-    return render_template("my_movies.html", movies=movies)
+@main_bp.route("/users/<int:user_id>/movies")
+def user_movies(user_id):
+    movies = get_user_movies(user_id)
+    is_owner = current_user.is_authenticated and current_user.id == user_id
+    return render_template("user_movies.html", movies=movies, is_owner=is_owner)
