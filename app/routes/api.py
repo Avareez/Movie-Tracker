@@ -1,7 +1,7 @@
 from flask import Blueprint, jsonify, request
-from flask_jwt_extended import create_access_token
+from flask_jwt_extended import create_access_token, jwt_required, get_jwt_identity
 from app.services.auth import register_user, authenticate_user
-from app.services.movies import get_user_movies
+from app.services.movies import get_user_movies, add_movie_to_user
 
 api_bp = Blueprint('api', __name__, url_prefix='/api')
 
@@ -50,3 +50,30 @@ def api_get_movies(user_id):
         "user_rating": m.user_rating,
         "added_date": m.added_date.isoformat()
     } for m in movies]), 200
+
+@api_bp.route("/users/<int:user_id>/movies", methods=["POST"])
+@jwt_required()
+def api_add_movie(user_id):
+    current_user_id = int(get_jwt_identity())
+    if current_user_id != user_id:
+        return jsonify({"error": "Unauthorized"}), 403
+    
+    data = request.get_json()
+    if not data:
+        return jsonify({"error": "Missing JSON data"}), 400
+    
+    tmdb_id = data.get("tmdb_id")
+    if not tmdb_id:
+        return jsonify({"error": "Missing TMDB ID"}), 400
+    
+    movie, error = add_movie_to_user(user_id, tmdb_id, data.get("status", "Plan to Watch"))
+    if error:
+        return jsonify({"error": error}), 409
+    
+    return jsonify({
+        "id": movie.id,
+        "tmdb_id": movie.tmdb_id,
+        "status": movie.status,
+        "user_rating": movie.user_rating,
+        "added_date": movie.added_date.isoformat()
+    }), 201

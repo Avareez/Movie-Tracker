@@ -17,4 +17,15 @@ Content-Type: application/json
 }
 
 ### GET - list of movies for given user
-GET http://127.0.0.1:5000/api/users/1/movies
+GET http://127.0.0.1:5000/api/users/2/movies
+
+
+### POST - add a movie to user's list (token required)
+POST http://127.0.0.1:5000/api/users/2/movies
+Authorization: Bearer PASTE_TOKEN_HERE
+Content-Type: application/json
+
+{
+    "tmdb_id": 438631,
+    "status": "Plan to watch"
+}
