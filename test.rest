@@ -29,3 +29,17 @@ Content-Type: application/json
     "tmdb_id": 438631,
     "status": "Plan to watch"
 }
+
+### PATCH - update movie status/rating (token required)
+PATCH http://127.0.0.1:5000/api/users/2/movies/1
+Authorization: Bearer PASTE_TOKEN_HERE
+Content-Type: application/json
+
+{
+    "status": "Watched",
+    "user_rating": 9.0
+}
+
+### DELETE - delete movie (token required)
+DELETE http://127.0.0.1:5000/api/users/2/movies/1
+Authorization: Bearer PASTE_TOKEN_HERE

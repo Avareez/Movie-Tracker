@@ -1,7 +1,7 @@
 from flask import Blueprint, jsonify, request
 from flask_jwt_extended import create_access_token, jwt_required, get_jwt_identity
 from app.services.auth import register_user, authenticate_user
-from app.services.movies import get_user_movies, add_movie_to_user
+from app.services.movies import get_user_movies, add_movie_to_user, delete_movie_from_user, update_movie
 
 api_bp = Blueprint('api', __name__, url_prefix='/api')
 
@@ -77,3 +77,43 @@ def api_add_movie(user_id):
         "user_rating": movie.user_rating,
         "added_date": movie.added_date.isoformat()
     }), 201
+
+@api_bp.route("/users/<int:user_id>/movies/<int:movie_id>", methods=["DELETE"])
+@jwt_required()
+def api_delete_movie(user_id, movie_id):
+    current_user_id = int(get_jwt_identity())
+    if current_user_id != user_id:
+        return jsonify({"error": "Unauthorized"}), 403
+
+    success, error = delete_movie_from_user(user_id, movie_id)
+    if error:
+        return jsonify({"error": error}), 404
+    return jsonify({"message": "Movie deleted"}), 200
+
+
+@api_bp.route("/users/<int:user_id>/movies/<int:movie_id>", methods=["PATCH"])
+@jwt_required()
+def api_update_movie(user_id, movie_id):
+    current_user_id = int(get_jwt_identity())
+    if current_user_id != user_id:
+        return jsonify({"error": "Unauthorized"}), 403
+
+    data = request.get_json()
+    if not data:
+        return jsonify({"error": "Missing JSON data"}), 400
+
+    movie, error = update_movie(
+        user_id, movie_id,
+        status=data.get("status"),
+        user_rating=data.get("user_rating")
+    )
+    if error:
+        return jsonify({"error": error}), 404
+
+    return jsonify({
+        "id": movie.id,
+        "tmdb_id": movie.tmdb_id,
+        "status": movie.status,
+        "user_rating": movie.user_rating,
+        "added_date": movie.added_date.isoformat()
+    }), 200

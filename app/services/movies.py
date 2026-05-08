@@ -13,3 +13,22 @@ def add_movie_to_user(user_id: int, tmdb_id: int, status: str = "Plan to Watch")
     db.session.add(movie)
     db.session.commit()
     return movie, None
+
+def delete_movie_from_user(user_id: int, movie_id: int) -> tuple[bool, str]:
+    movie = MovieItem.query.filter_by(id=movie_id, user_id=user_id).first()
+    if not movie:
+        return False, "Movie not found"
+    db.session.delete(movie)
+    db.session.commit()
+    return True, None
+
+def update_movie(user_id: int, movie_id: int, status: str = None, user_rating: float = None) -> tuple[MovieItem, str]:
+    movie = MovieItem.query.filter_by(id=movie_id, user_id=user_id).first()
+    if not movie:
+        return None, "Movie not found"
+    if status:
+        movie.status = status
+    if user_rating is not None:
+        movie.user_rating = user_rating
+    db.session.commit()
+    return movie, None
