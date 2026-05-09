@@ -1,7 +1,7 @@
-from flask import Blueprint, render_template, request
+from flask import Blueprint, render_template, request, redirect, url_for
 from flask_login import login_required, current_user
 from app.services.tmdb import search_movies, get_movie_details
-from app.services.movies import get_user_movies
+from app.services.movies import get_user_movies, add_movie_to_user
 
 main_bp = Blueprint('main', __name__)
 
@@ -26,3 +26,9 @@ def user_movies(user_id):
     movies = get_user_movies(user_id)
     is_owner = current_user.is_authenticated and current_user.id == user_id
     return render_template("user_movies.html", movies=movies, is_owner=is_owner)
+
+@main_bp.route("/movie/<int:tmdb_id>/add", methods=["POST"])
+@login_required
+def add_movie(tmdb_id):
+    add_movie_to_user(current_user.id, tmdb_id)
+    return redirect(url_for("main.user_movies", user_id=current_user.id))

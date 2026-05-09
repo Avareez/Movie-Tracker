@@ -8,7 +8,9 @@
 </head>
 
 <body>
+    <a href="{{ url_for('main.index') }}">Back</a>
     <h1>{{ movie.title }}</h1>
+
     {% if movie.poster_url %}
     <img src="{{ movie.poster_url }}" alt="{{ movie.title }} poster" width="200">
     {% else %}
@@ -17,14 +19,17 @@
         No Image
     </div>
     {% endif %}
-    <p><strong>Release Date:</strong>
-        {% if movie.release_date %}
-        {{ movie.release_date }}
-        {% else %}
-        N/A
-        {% endif %}
-    </p>
+
+    <p><strong>Release Date:</strong> {{ movie.release_date or "N/A" }}</p>
     <p><strong>Overview:</strong> {{ movie.overview or "No overview available." }}</p>
+
+    {% if current_user.is_authenticated %}
+    <form method="POST" action="{{ url_for('main.add_movie', tmdb_id=movie.id) }}">
+        <button type="submit">+ Add to my list</button>
+    </form>
+    {% else %}
+    <a href="{{ url_for('auth.login') }}">Login to add to your list</a>
+    {% endif %}
 </body>
 
 </html>
