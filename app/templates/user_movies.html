@@ -20,7 +20,10 @@
             Rating: {{ movie.user_rating or "N/A" }}
             {% if is_owner %}
             <a href="#">Change status</a> |
-            <a href="#">Delete</a>
+            <form method="POST" action="{{ url_for('main.delete_movie', user_id=user_id, movie_id=movie.id) }}"
+                style="display: inline;">
+                <button type="submit">Delete</button>
+            </form>
             {% endif %}
         </li>
         {% endfor %}
