@@ -1,7 +1,7 @@
 from flask import Blueprint, render_template, request, redirect, url_for
 from flask_login import login_required, current_user
 from app.services.tmdb import search_movies, get_movie_details
-from app.services.movies import get_user_movies, add_movie_to_user, delete_movie_from_user
+from app.services.movies import get_user_movies_service, add_user_movie_service, delete_user_movie_service, update_user_movie_service
 
 main_bp = Blueprint('main', __name__)
 
@@ -23,14 +23,14 @@ def movie_details(tmdb_id):
 
 @main_bp.route("/users/<int:user_id>/movies")
 def user_movies(user_id):
-    movies = get_user_movies(user_id)
+    movies = get_user_movies_service(user_id)
     is_owner = current_user.is_authenticated and current_user.id == user_id
     return render_template("user_movies.html", movies=movies, is_owner=is_owner, user_id=user_id)
 
 @main_bp.route("/movie/<int:tmdb_id>/add", methods=["POST"])
 @login_required
 def add_movie(tmdb_id):
-    add_movie_to_user(current_user.id, tmdb_id)
+    add_user_movie_service(current_user.id, tmdb_id)
     return redirect(url_for("main.user_movies", user_id=current_user.id))
 
 @main_bp.route("/users/<int:user_id>/movies/<int:movie_id>/delete", methods=["POST"])
@@ -38,5 +38,10 @@ def add_movie(tmdb_id):
 def delete_movie(user_id, movie_id):
     if current_user.id != user_id:
         return redirect(url_for("main.user_movies", user_id=user_id))
-    delete_movie_from_user(user_id, movie_id)
+    delete_user_movie_service(user_id, movie_id)
     return redirect(url_for("main.user_movies", user_id=current_user.id))
+
+@main_bp.route("/users/<int:user_id>/movies/<int:movie_id>/update", methods=["POST"])
+@login_required
+def update_movie(user_id, movie_id):
+    pass

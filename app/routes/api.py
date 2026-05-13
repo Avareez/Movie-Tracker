@@ -1,7 +1,7 @@
 from flask import Blueprint, jsonify, request
 from flask_jwt_extended import create_access_token, jwt_required, get_jwt_identity
 from app.services.auth import register_user, authenticate_user
-from app.services.movies import get_user_movies, add_movie_to_user, delete_movie_from_user, update_movie
+from app.services.movies import get_user_movies_service, add_user_movie_service, delete_user_movie_service, update_user_movie_service
 
 api_bp = Blueprint('api', __name__, url_prefix='/api')
 
@@ -42,7 +42,7 @@ def api_login():
 
 @api_bp.route("/users/<int:user_id>/movies", methods=["GET"])
 def api_get_movies(user_id):
-    movies = get_user_movies(user_id)
+    movies = get_user_movies_service(user_id)
     return jsonify([{
         "id": m.id,
         "tmdb_id": m.tmdb_id,
@@ -66,7 +66,7 @@ def api_add_movie(user_id):
     if not tmdb_id:
         return jsonify({"error": "Missing TMDB ID"}), 400
     
-    movie, error = add_movie_to_user(user_id, tmdb_id, data.get("status", "Plan to Watch"))
+    movie, error = add_user_movie_service(user_id, tmdb_id, data.get("status", "Plan to Watch"))
     if error:
         return jsonify({"error": error}), 409
     
@@ -85,7 +85,7 @@ def api_delete_movie(user_id, movie_id):
     if current_user_id != user_id:
         return jsonify({"error": "Unauthorized"}), 403
 
-    success, error = delete_movie_from_user(user_id, movie_id)
+    success, error = delete_user_movie_service(user_id, movie_id)
     if error:
         return jsonify({"error": error}), 404
     return jsonify({"message": "Movie deleted"}), 200
@@ -102,7 +102,7 @@ def api_update_movie(user_id, movie_id):
     if not data:
         return jsonify({"error": "Missing JSON data"}), 400
 
-    movie, error = update_movie(
+    movie, error = update_user_movie_service(
         user_id, movie_id,
         status=data.get("status"),
         user_rating=data.get("user_rating")
