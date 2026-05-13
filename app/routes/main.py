@@ -44,4 +44,8 @@ def delete_movie(user_id, movie_id):
 @main_bp.route("/users/<int:user_id>/movies/<int:movie_id>/update", methods=["POST"])
 @login_required
 def update_movie(user_id, movie_id):
-    pass
+    if current_user.id != user_id:
+        return redirect(url_for("main.user_movies", user_id=user_id))
+    status = request.form.get("status")
+    update_user_movie_service(user_id, movie_id, status=status)
+    return redirect(url_for("main.user_movies", user_id=current_user.id))

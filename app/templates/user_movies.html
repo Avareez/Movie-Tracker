@@ -19,7 +19,16 @@
             Status: {{ movie.status }} |
             Rating: {{ movie.user_rating or "N/A" }}
             {% if is_owner %}
-            <a href="#">Change status</a> |
+            <form method="POST" action="{{ url_for('main.update_movie', user_id=user_id, movie_id=movie.id) }}"
+                style="display: inline;">
+                <select name="status">
+                    <option value="Plan to watch" {% if movie.status=="Plan to watch" %}selected{% endif %}>Plan to
+                        watch</option>
+                    <option value="Watched" {% if movie.status=="Watched" %}selected{% endif %}>Watched</option>
+                </select>
+                <button type="submit">Update</button>
+            </form>
+            |
             <form method="POST" action="{{ url_for('main.delete_movie', user_id=user_id, movie_id=movie.id) }}"
                 style="display: inline;">
                 <button type="submit">Delete</button>
