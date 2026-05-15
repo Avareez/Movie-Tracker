@@ -1,9 +1,27 @@
 from flask import Blueprint, jsonify, request
 from flask_jwt_extended import create_access_token, jwt_required, get_jwt_identity
+from app.services.tmdb import search_movies, get_movie_details
 from app.services.auth import register_user, authenticate_user
 from app.services.movies import get_user_movies_service, add_user_movie_service, delete_user_movie_service, update_user_movie_service
 
 api_bp = Blueprint('api', __name__, url_prefix='/api')
+
+@api_bp.route("/search", methods=["GET"])
+def api_search():
+    query = request.args.get("query", "").strip()
+    if not query:
+        return jsonify({"error": "Missing query parameter"}), 400
+
+    movies = search_movies(query)
+    return jsonify(movies), 200
+
+@api_bp.route("/movie/<int:tmdb_id>", methods=["GET"])
+def api_movie_details(tmdb_id):
+    movie = get_movie_details(tmdb_id)
+    if not movie:
+        return jsonify({"error": "Movie not found"}), 404
+    return jsonify(movie), 200
+
 
 @api_bp.route("/register", methods=["POST"])
 def api_register():

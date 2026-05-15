@@ -1,3 +1,9 @@
+### GET - search movies
+GET http://127.0.0.1:5000/api/search?query=Dune
+
+### GET - movie details
+GET http://127.0.0.1:5000/api/movie/438631
+
 ### POST - register a new user
 POST http://127.0.0.1:5000/api/register
 Content-Type: application/json
