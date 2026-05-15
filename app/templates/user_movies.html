@@ -22,8 +22,8 @@
             <form method="POST" action="{{ url_for('main.update_movie', user_id=user_id, movie_id=movie.id) }}"
                 style="display: inline;">
                 <select name="status">
-                    <option value="Plan to watch" {% if movie.status=="Plan to watch" %}selected{% endif %}>Plan to
-                        watch</option>
+                    <option value="Plan to Watch" {% if movie.status=="Plan to Watch" %}selected{% endif %}>Plan to
+                        Watch</option>
                     <option value="Watched" {% if movie.status=="Watched" %}selected{% endif %}>Watched</option>
                 </select>
                 <button type="submit">Update</button>

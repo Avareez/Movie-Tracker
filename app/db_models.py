@@ -25,7 +25,7 @@ class MovieItem(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     tmdb_id = db.Column(db.Integer, nullable=False)
     user_id = db.Column(db.Integer, db.ForeignKey("users.id"), nullable=False)
-    status = db.Column(db.String(20), nullable=False, default="Plan to watch")
+    status = db.Column(db.String(20), nullable=False, default="Plan to Watch")
     user_rating = db.Column(db.Float, nullable=True)
     added_date = db.Column(db.DateTime, default=datetime.utcnow, nullable=False)
 
