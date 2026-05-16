@@ -46,6 +46,8 @@ def delete_movie(user_id, movie_id):
 def update_movie(user_id, movie_id):
     if current_user.id != user_id:
         return redirect(url_for("main.user_movies", user_id=user_id))
+    
     status = request.form.get("status")
-    update_user_movie_service(user_id, movie_id, status=status)
+    user_rating = request.form.get("user_rating", type=float)
+    update_user_movie_service(user_id, movie_id, status=status, user_rating=user_rating)
     return redirect(url_for("main.user_movies", user_id=current_user.id))
