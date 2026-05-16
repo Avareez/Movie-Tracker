@@ -23,6 +23,10 @@
     <p><strong>Release Date:</strong> {{ movie.release_date or "N/A" }}</p>
     <p><strong>Overview:</strong> {{ movie.overview or "No overview available." }}</p>
 
+    {% if error %}
+    <p style="color: red;">{{ error }}</p>
+    {% endif %}
+
     {% if current_user.is_authenticated %}
     <form method="POST" action="{{ url_for('main.add_movie', tmdb_id=movie.id) }}">
         <button type="submit">+ Add to my list</button>

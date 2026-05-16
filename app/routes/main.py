@@ -19,7 +19,8 @@ def index():
 @main_bp.route("/movie/<int:tmdb_id>")
 def movie_details(tmdb_id):
     movie = get_movie_details(tmdb_id)
-    return render_template("movie_details.html", movie=movie)
+    error = request.args.get("error")
+    return render_template("movie_details.html", movie=movie, error=error)
 
 @main_bp.route("/users/<int:user_id>/movies")
 def user_movies(user_id):
@@ -30,7 +31,9 @@ def user_movies(user_id):
 @main_bp.route("/movie/<int:tmdb_id>/add", methods=["POST"])
 @login_required
 def add_movie(tmdb_id):
-    add_user_movie_service(current_user.id, tmdb_id)
+    movie, error = add_user_movie_service(current_user.id, tmdb_id)
+    if error:
+        return redirect(url_for("main.movie_details", tmdb_id=tmdb_id, error=error))
     return redirect(url_for("main.user_movies", user_id=current_user.id))
 
 @main_bp.route("/users/<int:user_id>/movies/<int:movie_id>/delete", methods=["POST"])
