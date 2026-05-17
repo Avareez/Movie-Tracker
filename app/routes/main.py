@@ -26,7 +26,20 @@ def movie_details(tmdb_id):
 def user_movies(user_id):
     movies = get_user_movies_service(user_id)
     is_owner = current_user.is_authenticated and current_user.id == user_id
-    return render_template("user_movies.html", movies=movies, is_owner=is_owner, user_id=user_id)
+
+    detailed_movies = []
+    for movie in movies:
+        details = get_movie_details(movie.tmdb_id)
+        detailed_movies.append({
+            "id": movie.id,
+            "tmdb_id": movie.tmdb_id,
+            "status": movie.status,
+            "user_rating": movie.user_rating,
+            "title": details.get("title", "Unknown Title") if details else "Unknown Title",
+            "poster_url": details.get("poster_url") if details else None,
+        })
+
+    return render_template("user_movies.html", movies=detailed_movies, is_owner=is_owner, user_id=user_id)
 
 @main_bp.route("/movie/<int:tmdb_id>/add", methods=["POST"])
 @login_required

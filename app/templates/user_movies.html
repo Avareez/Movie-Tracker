@@ -1,47 +1,64 @@
-<!DOCTYPE html>
-<html lang="en">
+{% extends "base.html" %}
 
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Movie List</title>
-</head>
+{% block title %}{% if is_owner %}My Movies{% else %}User's Movies{% endif %}{% endblock %}
 
-<body>
-    <h1>{% if is_owner %}My Movies{% else %}User's Movies{% endif %}</h1>
-    <a href="{{ url_for('main.index') }}">Back</a>
+{% block content %}
+<h1 style="margin-bottom: 0.5rem;">{% if is_owner %}My Movies{% else %}User's Movies{% endif %}</h1>
+<p class="text-muted">Manage your personal cinematic collection</p>
 
-    {% if movies %}
-    <ul>
-        {% for movie in movies %}
-        <li>
-            TMDB ID: {{ movie.tmdb_id }} |
-            Status: {{ movie.status }} |
-            Rating: {{ movie.user_rating or "N/A" }}
-            {% if is_owner %}
-            <form method="POST" action="{{ url_for('main.update_movie', user_id=user_id, movie_id=movie.id) }}"
-                style="display: inline;">
+{% if movies %}
+<ul class="movie-list">
+    {% for movie in movies %}
+    <li class="movie-list-item">
+        <div class="movie-list-info">
+            {% if movie.poster_url %}
+            <img class="movie-list-poster" src="{{ movie.poster_url }}" alt="{{ movie.title }} poster">
+            {% else %}
+            <div class="movie-list-no-poster">
+                <i data-lucide="film"></i>
+            </div>
+            {% endif %}
+
+            <div class="movie-list-details">
+                <a href="{{ url_for('main.movie_details', tmdb_id=movie.tmdb_id) }}" class="movie-list-title">
+                    {{ movie.title or "Unknown Title" }}
+                </a>
+                <div class="movie-list-meta">
+                    <span class="badge">{{ movie.status }}</span>
+                    <span class="text-muted">⭐ {{ movie.user_rating or "N/A" }} / 10</span>
+                </div>
+            </div>
+        </div>
+
+        {% if is_owner %}
+        <div class="movie-list-actions">
+            <form method="POST" action="{{ url_for('main.update_movie', user_id=user_id, movie_id=movie.id) }}">
                 <select name="status">
-                    <option value="Plan to Watch" {% if movie.status=="Plan to Watch" %}selected{% endif %}>Plan to
-                        Watch</option>
+                    <option value="Plan to watch" {% if movie.status=="Plan to watch" %}selected{% endif %}>Plan to
+                        watch</option>
                     <option value="Watched" {% if movie.status=="Watched" %}selected{% endif %}>Watched</option>
                 </select>
                 <input type="number" name="user_rating" min="1" max="10" step="0.5"
-                    value="{{ movie.user_rating or '' }}" placeholder="Rating 1-10">
-                <button type="submit">Update</button>
+                    value="{{ movie.user_rating or '' }}" placeholder="Rating">
+                <button type="submit" class="btn-outline">Update</button>
             </form>
-            |
-            <form method="POST" action="{{ url_for('main.delete_movie', user_id=user_id, movie_id=movie.id) }}"
-                style="display: inline;">
-                <button type="submit">Delete</button>
+            <form method="POST" action="{{ url_for('main.delete_movie', user_id=user_id, movie_id=movie.id) }}">
+                <button type="submit" class="btn-danger" title="Remove from list">
+                    <i data-lucide="trash-2"></i>
+                </button>
             </form>
-            {% endif %}
-        </li>
-        {% endfor %}
-    </ul>
-    {% else %}
-    <p>No movies on your list yet.</p>
-    {% endif %}
-</body>
-
-</html>
+        </div>
+        {% endif %}
+    </li>
+    {% endfor %}
+</ul>
+{% else %}
+<div class="empty-state">
+    <i data-lucide="popcorn" style="width: 48px; height: 48px; color: var(--text-muted); margin-bottom: 1rem;"></i>
+    <p class="text-muted">No movies on your list yet.</p>
+    <a href="{{ url_for('main.index') }}" class="btn-primary" style="margin-top: 1rem;">
+        <i data-lucide="search"></i> Find your first movie
+    </a>
+</div>
+{% endif %}
+{% endblock %}

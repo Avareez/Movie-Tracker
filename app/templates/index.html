@@ -1,50 +1,32 @@
-<!DOCTYPE html>
-<html lang="en">
+{% extends "base.html" %}
 
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Movie Tracker</title>
-</head>
+{% block title %}MovieVerse – Search{% endblock %}
 
-<body>
-    <div style="display: flex; justify-content: flex-end; margin-bottom: 20px;">
-        <a href="{{url_for('auth.register')}}" style="margin: 5px;">Register</a>
-        <a href="{{url_for('auth.login')}}" style="margin: 5px;">Login</a>
-        <a href="{{ url_for('auth.logout') }}" style="margin: 5px;">Logout</a>
-    </div>
-    <h1>Movie Tracker</h1>
-    <form method="POST">
+{% block content %}
+<div class="search-section">
+    <h1>Discover Movies</h1>
+    <p>Search for your favourite films and build your watchlist</p>
+    <form method="POST" class="search-form">
         <input type="text" name="query" placeholder="Search for a movie..." value="{{ query }}">
-        <button type="submit">Search</button>
+        <button type="submit">
+            <i data-lucide="search"></i> Search
+        </button>
     </form>
+</div>
 
-    <div>
-        {% for movie in movies %}
-        <div>
-            <a href="{{ url_for('main.movie_details', tmdb_id=movie.id) }}">
-                {% if movie.poster_url %}
-                <img src="{{ movie.poster_url }}" alt="{{ movie.title }} poster" width="100">
-                {% else %}
-                <div
-                    style="width: 100px; height: 150px; background-color: #ccc; display: flex; align-items: center; justify-content: center;">
-                    No Image
-                </div>
-                {% endif %}
-                <div>
-                    <h5>{{ movie.title }}</h5>
-                    <p>
-                        {% if movie.release_date %}
-                        {{ movie.release_date[:4] }}
-                        {% else %}
-                        N/A
-                        {% endif %}
-                    </p>
-                </div>
-            </a>
+<div class="movie-grid">
+    {% for movie in movies %}
+    <a href="{{ url_for('main.movie_details', tmdb_id=movie.id) }}" class="movie-card">
+        {% if movie.poster_url %}
+        <img src="{{ movie.poster_url }}" alt="{{ movie.title }} poster">
+        {% else %}
+        <div class="movie-card-no-poster">No Image</div>
+        {% endif %}
+        <div class="movie-card-body">
+            <p class="movie-card-title">{{ movie.title }}</p>
+            <p class="movie-card-year">{{ movie.release_date[:4] if movie.release_date else "N/A" }}</p>
         </div>
-        {% endfor %}
-    </div>
-</body>
-
-</html>
+    </a>
+    {% endfor %}
+</div>
+{% endblock %}
